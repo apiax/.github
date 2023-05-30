@@ -10,9 +10,9 @@ curl -sS https://webi.sh/kubectx | sh
 # curl -sS https://webi.sh/vim-essentials | sh
 
 # https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
-curl -sLO "https://s3.${AWS_REGION}.amazonaws.com/amazon-eks/${VERSION_KUBECTL}/2023-05-11/bin/linux/${ARCH}/kubectl"
+curl -sLO "https://dl.k8s.io/release/v${VERSION_KUBECTL}/bin/linux/${ARCH}/kubectl"
 sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
-echo 'source <(kubectl completion bash)' >>~/.bashrc
+echo 'source <(kubectl completion bash)' >> ~/.bashrc
 echo 'alias k=kubectl' >>~/.bashrc
 echo 'complete -o default -F __start_kubectl k' >>~/.bashrc
 source ~/.bashrc
