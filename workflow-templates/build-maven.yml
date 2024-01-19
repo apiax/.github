@@ -1,0 +1,46 @@
+name: Build Maven
+
+on:
+  pull_request:
+
+concurrency:
+  group: "${{ github.ref }}"
+  cancel-in-progress: true
+
+env:
+  # This is the name of the environment variable that will be used to pass the
+  # name of the project to the build script.
+  JAVA_VERSION: "17"
+  JAVA_DISTRIBUTION: "liberica"
+  MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=${{ github.workspace }}/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end -s ci-settings.xml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: "${{ env.JAVA_VERSION }}"
+          distribution: "${{ env.JAVA_DISTRIBUTION }}"
+          cache: "maven"
+      
+      - name: Build
+        run: mvn ${{ env.MAVEN_CLI_OPTS }} package -DskipTests=true -Dmaven.javadoc.skip=true
+      
+      - name: Test
+        run: mvn ${{ env.MAVEN_CLI_OPTS }} -Dmaven.test.failure.ignore=true test
+
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: "JUnit Report"
+          path: "**/target/surefire-reports/TEST-*.xml"
+          reporter: 'java-junit'
+          fail-on-empty: 'false'

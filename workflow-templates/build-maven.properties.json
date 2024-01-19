@@ -1,0 +1,11 @@
+{
+    "name": "Build Maven",
+    "description": "Build and Test Maven based projects",
+    "iconName": "octicon zap",
+    "categories": [
+        "Maven", "Spring", "Java"
+    ],
+    "filePatterns": [
+        "pom.xml"
+    ]
+}
