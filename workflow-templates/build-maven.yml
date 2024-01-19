@@ -2,6 +2,24 @@ name: Build Maven
 
 on:
   pull_request:
+  workflow_call:
+    inputs:
+      java_version:
+        description: "Java version"
+        required: false
+        default: "17"
+        type: string
+      java_distribution:
+        description: "Java distribution"
+        required: false
+        default: "liberica"
+        type: string
+    secrets:
+      gl_token:
+        description: "GitLab token to access private packages"
+        required: false
+        default: ${{ secrets.GL_TOKEN }}
+        type: string
 
 concurrency:
   group: "${{ github.ref }}"
@@ -10,14 +28,15 @@ concurrency:
 env:
   # This is the name of the environment variable that will be used to pass the
   # name of the project to the build script.
-  JAVA_VERSION: "17"
-  JAVA_DISTRIBUTION: "liberica"
   MAVEN_OPTS: "-Dhttps.protocols=TLSv1.2 -Dmaven.repo.local=${{ github.workspace }}/.m2/repository -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end -s ci-settings.xml"
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
+    env:
+      GL_TOKEN: ${{ secrets.gl_token }}
 
     steps:
       - name: Checkout code
@@ -26,12 +45,12 @@ jobs:
       - name: Setup Java
         uses: actions/setup-java@v2
         with:
-          java-version: "${{ env.JAVA_VERSION }}"
-          distribution: "${{ env.JAVA_DISTRIBUTION }}"
+          java-version: "${{ inputs.java_version }}"
+          distribution: "${{ inputs.java_distribution }}"
           cache: "maven"
       
       - name: Build
-        run: mvn ${{ env.MAVEN_CLI_OPTS }} package -DskipTests=true -Dmaven.javadoc.skip=true
+        run: mvn ${{ env.MAVEN_CLI_OPTS }} package -Dmaven.test.skip=true -DskipTests=true -Dmaven.javadoc.skip=true
       
       - name: Test
         run: mvn ${{ env.MAVEN_CLI_OPTS }} -Dmaven.test.failure.ignore=true test
