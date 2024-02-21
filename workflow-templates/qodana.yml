@@ -4,8 +4,8 @@ on:
   pull_request:
   push:
     branches:
-      - main
-      - master
+      - $default-branch
+      - $protected-branches
       - 'releases/*'
 
 jobs:
