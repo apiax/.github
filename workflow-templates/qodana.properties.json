@@ -1,6 +1,6 @@
 {
-    "name": "Qodana Code Quality Scan",
-    "description": "Scans code with Qodana to assess code quality, licenses and vulnerable dependencies",
+    "name": "Qodana Code Quality Analysis",
+    "description": "Scans code with Qodana to analize code quality, audit licenses and detect vulnerable dependencies",
     "iconName": "octicon codescan-checkmark",
     "categories": [
         "code-quality"
