@@ -1,0 +1,11 @@
+{
+    "name": "Web App CI",
+    "description": "Test, Build and Publish container image of web based projects",
+    "iconName": "octicon globe",
+    "categories": [
+        "angular", "typescript", "javascript"
+    ],
+    "filePatterns": [
+        "angular.json", "nx.json"
+    ]
+}

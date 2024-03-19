@@ -1,0 +1,29 @@
+name: Web App CI
+
+concurrency:
+  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.ref_name }}
+
+on:
+  push:
+    branches:
+      - $default-branch
+      - $protected-branches
+      - beta
+    tags:
+      - v*
+  pull_request_target:
+    branches:
+      - $default-branch
+      - $protected-branches
+  workflow_dispatch:
+
+jobs:
+  ci:
+    uses: apiax/actions/.github/workflows/ci-webapp.yml@main
+    secrets: inherit
+    with:
+      aws-ecr-registry: ${{ vars.AWS_ECR_REGISTRY }}
+      aws-ecr-repo: ${{ github.repository }}
+      aws-ecr-enabled: true
+      build-artifact-path: "dist/"
